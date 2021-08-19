@@ -1,8 +1,10 @@
 package com.omercankoc.contentprovidersql
 
 import android.Manifest
+import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
@@ -12,6 +14,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import java.io.ByteArrayOutputStream
 import kotlin.Exception
 
 class DetailActivity : AppCompatActivity() {
@@ -21,6 +24,8 @@ class DetailActivity : AppCompatActivity() {
     private lateinit var buttonSave : Button
     private lateinit var buttonUpdate : Button
     private lateinit var buttonDelete : Button
+
+    lateinit var bitmap : Bitmap
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,7 +80,19 @@ class DetailActivity : AppCompatActivity() {
     }
 
     fun save(view : View){
+        var language = editTextLanguage.text.toString()
+        var outputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG,50,outputStream)
+        var bytes = outputStream.toByteArray() //
 
+        val contentValues = ContentValues()
+        contentValues.put(ContentProviderSql.NAME,language)
+        contentValues.put(ContentProviderSql.IMAGE,bytes)
+
+        contentResolver.insert(ContentProviderSql.CONTENT_URI,contentValues)
+
+        val intent = Intent(applicationContext,MainActivity::class.java)
+        startActivity(intent)
     }
 
     fun update(view : View){
