@@ -112,6 +112,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="uIa-0h-tga"/>
                     <connections>
+                        <outlet property="buttonSave" destination="JDX-K8-B08" id="hVN-PR-bXe"/>
                         <outlet property="imageViewImage" destination="UZv-1T-DOE" id="EBL-cZ-rmX"/>
                         <outlet property="textFieldDeveloper" destination="AfF-pu-vgG" id="M6l-J6-dfP"/>
                         <outlet property="textFieldLanguage" destination="emp-0M-58P" id="Qjp-H9-DMZ"/>

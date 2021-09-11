@@ -7,6 +7,7 @@ class DetailsViewController: UIViewController, UIImagePickerControllerDelegate, 
     @IBOutlet weak var textFieldLanguage: UITextField!
     @IBOutlet weak var textFieldDeveloper: UITextField!
     @IBOutlet weak var textFieldYear: UITextField!
+    @IBOutlet weak var buttonSave: UIButton!
     
     var chosenLanguage = ""
     var chosenUUID : UUID?
@@ -16,6 +17,11 @@ class DetailsViewController: UIViewController, UIImagePickerControllerDelegate, 
         
         // Kayitli verileri CoreData'dan cek ve goster.
         if(chosenLanguage != ""){
+            
+            // Kayit gosterilirken Sava Button'u gorunmaz ve tiklanamaz yap.
+            buttonSave.isHidden = true
+            buttonSave.isEnabled = true
+            
             let appDelegate = UIApplication.shared.delegate as! AppDelegate // UI App Delegate eris.
             let context = appDelegate.persistentContainer.viewContext
             let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Languages") // Verileri getir.
@@ -46,6 +52,9 @@ class DetailsViewController: UIViewController, UIImagePickerControllerDelegate, 
                 
             }
         } else { // Yeni kayit olusturulacak.
+            // Kayit gosterilirken Sava Button'u gorunur ve tiklanamaz yap.
+            buttonSave.isHidden = false
+            buttonSave.isEnabled = false
             
         }
         
@@ -79,6 +88,9 @@ class DetailsViewController: UIViewController, UIImagePickerControllerDelegate, 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         imageViewImage.image = info[.originalImage] as? UIImage
         self.dismiss(animated: true, completion: nil)
+        
+        // Image secildikten sonra Save Button'u tiklanabilir yap.
+        buttonSave.isEnabled = true
     }
     
     @IBAction func save(_ sender: Any) {

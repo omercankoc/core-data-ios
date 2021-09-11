@@ -97,5 +97,41 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             print("Error get data!")
         }
     }
+    
+    // Saga cekilen veriyi sil.
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if(editingStyle == .delete){
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate // UI App Delegate eris.
+            let context = appDelegate.persistentContainer.viewContext
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Languages")
+            let idString = uuidArray[indexPath.row].uuidString
+            fetchRequest.predicate = NSPredicate(format: "id = %@", idString)
+            fetchRequest.returnsObjectsAsFaults = false
+            do {
+                let results = try context.fetch(fetchRequest)
+                if results.count > 0{
+                    for result in results as! [NSManagedObject]{
+                        if let id = result.value(forKey: "id") as? UUID{
+                            if id == uuidArray[indexPath.row]{
+                                context.delete(result)
+                                uuidArray.remove(at: indexPath.row)
+                                languageArray.remove(at: indexPath.row)
+                                self.tableViewLanguages.reloadData()
+                                
+                                do {
+                                    try context.save()
+                                } catch {
+                                    print("Saved Error!")
+                                }
+                                break
+                            }
+                        }
+                    }
+                }
+            } catch {
+                print("Deleted Error!")
+            }
+        }
+    }
 }
 
