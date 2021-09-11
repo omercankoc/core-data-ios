@@ -1,4 +1,5 @@
 import UIKit
+import CoreData
 
 class DetailsViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
@@ -7,8 +8,46 @@ class DetailsViewController: UIViewController, UIImagePickerControllerDelegate, 
     @IBOutlet weak var textFieldDeveloper: UITextField!
     @IBOutlet weak var textFieldYear: UITextField!
     
+    var chosenLanguage = ""
+    var chosenUUID : UUID?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Kayitli verileri CoreData'dan cek ve goster.
+        if(chosenLanguage != ""){
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate // UI App Delegate eris.
+            let context = appDelegate.persistentContainer.viewContext
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Languages") // Verileri getir.
+            let idString = chosenUUID?.uuidString
+            fetchRequest.predicate = NSPredicate(format: "id = %@", idString!) // UUID'ye gore Query yap.
+            fetchRequest.returnsObjectsAsFaults = false
+            
+            do  {
+                let results = try context.fetch(fetchRequest)
+                if(results.count > 0){
+                    for result in results as! [NSManagedObject]{
+                        if let language = result.value(forKey: "language") as? String {
+                            textFieldLanguage.text = language
+                        }
+                        if let developer = result.value(forKey: "developer") as? String {
+                            textFieldDeveloper.text = developer
+                        }
+                        if let year = result.value(forKey: "year") as? Int {
+                            textFieldYear.text = String(year)
+                        }
+                        if let image = result.value(forKey: "image") as? Data {
+                            let image = UIImage(data: image)
+                            imageViewImage.image = image
+                        }
+                    }
+                }
+            } catch {
+                
+            }
+        } else { // Yeni kayit olusturulacak.
+            
+        }
         
         // Ekranda her hangi bir yere tiklanmayi algila.
         let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
@@ -43,6 +82,36 @@ class DetailsViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     @IBAction func save(_ sender: Any) {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate // UI App Delegate eris.
+        let context = appDelegate.persistentContainer.viewContext
         
+        
+        let saveData = NSEntityDescription.insertNewObject(forEntityName: "Languages", into: context)
+        
+        // Save Attributes - Verileri kaydet.
+        saveData.setValue(textFieldLanguage.text , forKey: "language")
+        saveData.setValue(textFieldDeveloper.text, forKey: "developer")
+        if let year = Int(textFieldYear.text!){
+            saveData.setValue(year, forKey: "year")
+        }
+        
+        // UUID otomatik olustur.
+        saveData.setValue(UUID(), forKey: "id")
+        
+        // Image verisini al ve kucult.
+        let data = imageViewImage.image!.jpegData(compressionQuality: 0.5)
+        saveData.setValue(data, forKey: "image")
+        
+        do {
+            try context.save()
+            print("Success!")
+        } catch {
+            print("Error!")
+        }
+        
+        // Diger view controller'a yeni veri eklendigi mesajini yolla ve getData fonksiyonunu tetikle.
+        NotificationCenter.default.post(name : Notification.Name("newData"),object: nil)
+        // Yeni kayit islemi tamamlandiktan sonra onceki view controller'a geri don.
+        self.navigationController?.popViewController(animated: true)
     }
 }
