@@ -6,9 +6,13 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        
+        // Language eklemek icin Navigation Bar'da button olustur.
+        navigationController?.navigationBar.topItem?.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.add, target: self, action: #selector(addLanguage))
     }
 
-
+    @objc func addLanguage(){
+        performSegue(withIdentifier:  "toDetailsViewController", sender: nil)
+    }
 }
 
