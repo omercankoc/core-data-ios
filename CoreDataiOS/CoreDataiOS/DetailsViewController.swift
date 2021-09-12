@@ -54,8 +54,7 @@ class DetailsViewController: UIViewController, UIImagePickerControllerDelegate, 
         } else { // Yeni kayit olusturulacak.
             // Kayit gosterilirken Sava Button'u gorunur ve tiklanamaz yap.
             buttonSave.isHidden = false
-            buttonSave.isEnabled = false
-            
+            buttonSave.isEnabled = false            
         }
         
         // Ekranda her hangi bir yere tiklanmayi algila.

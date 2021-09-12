@@ -27,41 +27,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     override func viewWillAppear(_ animated: Bool) {
         NotificationCenter.default.addObserver(self, selector: #selector(getData), name: NSNotification.Name(rawValue: "newData"), object: nil)
     }
-
+    
     // Yeni kayit olustur.
     @objc func addLanguage(){
-        selectedLanguage = ""
+        selectedLanguage = "" // Yeni kayit olusturulacak.
         performSegue(withIdentifier:  "toDetailsViewController", sender: nil)
     }
     
-    //
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if(segue.identifier == "toDetailsViewController"){
-            let destinationVC = segue.destination as! DetailsViewController
-            destinationVC.chosenLanguage = selectedLanguage
-            destinationVC.chosenUUID = selectedUUID
-        }
-    }
-    
-    // Row sayisini elde et.
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return languageArray.count
-    }
-    
-    // Row icerigini elde et.
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell()
-        cell.textLabel?.text = languageArray[indexPath.row]
-        return cell
-    }
-    
-    // Tiklanan Row'un detay sayfasina git.
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        selectedLanguage = languageArray[indexPath.row]
-        selectedUUID = uuidArray[indexPath.row]
-        performSegue(withIdentifier: "toDetailsViewController", sender: nil)
-    }
-    
+    // Core Data'dan verileri cek.
     @objc func getData(){
         
         // Goruntulenecek dizileri temizle.
@@ -69,7 +42,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         uuidArray.removeAll(keepingCapacity: false)
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate // UI App Delegate eris.
-        let context = appDelegate.persistentContainer.viewContext
+        let context = appDelegate.persistentContainer.viewContext // DB erisimi icin context tanimla.
         
         // Verileri getir.
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Languages")
@@ -96,6 +69,34 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         } catch {
             print("Error get data!")
         }
+    }
+    
+    // Segue baslamadan once kontrolleri ve atamalari gerceklestir.
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if(segue.identifier == "toDetailsViewController"){
+            let destinationVC = segue.destination as! DetailsViewController
+            destinationVC.chosenLanguage = selectedLanguage
+            destinationVC.chosenUUID = selectedUUID
+        }
+    }
+    
+    // Row sayisini elde et.
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return languageArray.count
+    }
+    
+    // Row icerigini elde et.
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell()
+        cell.textLabel?.text = languageArray[indexPath.row]
+        return cell
+    }
+    
+    // Tiklanan Row'un detay sayfasina git.
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        selectedLanguage = languageArray[indexPath.row]
+        selectedUUID = uuidArray[indexPath.row]
+        performSegue(withIdentifier: "toDetailsViewController", sender: nil)
     }
     
     // Saga cekilen veriyi sil.
