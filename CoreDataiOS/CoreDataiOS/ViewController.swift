@@ -52,11 +52,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             let results = try context.fetch(fetchRequest)
             if(results.count > 0){
                 for result in results as! [NSManagedObject]{
-                    // language verileri al ve ilgili listeye ekle.
+                    // Language verileri al ve ilgili listeye ekle.
                     if let language = result.value(forKey: "language") as? String {
                         self.languageArray.append(language)
                     }
-                    // id verilerini al ve ilgili listeye ekle.
+                    // ID verilerini al ve ilgili listeye ekle.
                     if let id = result.value(forKey: "id") as? UUID {
                         self.uuidArray.append(id)
                     }
