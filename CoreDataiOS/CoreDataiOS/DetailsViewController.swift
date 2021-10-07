@@ -18,7 +18,7 @@ class DetailsViewController: UIViewController, UIImagePickerControllerDelegate, 
         // Kayitli verileri CoreData'dan cek ve goster.
         if(chosenLanguage != ""){
             
-            // Kayit gosterilirken Sava Button'u gorunmaz ve tiklanamaz yap.
+            // Kayit gosterilirken Sava Button'u gorunmez ve tiklanamaz yap.
             buttonSave.isHidden = true
             buttonSave.isEnabled = true
             
